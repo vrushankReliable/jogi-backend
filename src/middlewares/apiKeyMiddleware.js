@@ -6,6 +6,11 @@ const limiters = new Map();
 
 exports.protectApiKey = (requiredScope) => {
   return async (req, res, next) => {
+    // Allow preflight requests (OPTIONS) to bypass checks
+    if (req.method === 'OPTIONS') {
+      return next();
+    }
+
     const keyHeader = req.headers['x-api-key'];
 
     // Every request now requires an API key

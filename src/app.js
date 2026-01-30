@@ -23,16 +23,22 @@ app.use(helmet({
   crossOriginResourcePolicy: false,
   crossOriginEmbedderPolicy: false
 }));
-app.use(cors({
+// CORS Configuration
+const corsOptions = {
   origin: [
     'http://localhost:3000',
     'http://localhost:3001',
     'https://jogi-admin-sigma.vercel.app',
     'https://jogi-frontend-five.vercel.app',
     ...(process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [])
-  ].filter(Boolean), 
-  credentials: true
-}));
+  ], 
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key']
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
 
 // Global Rate Limiting - Basic DOS protection
 const globalLimiter = rateLimit({

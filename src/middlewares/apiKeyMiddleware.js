@@ -25,11 +25,13 @@ exports.protectApiKey = (requiredScope) => {
     }
 
     const [keyId, secret] = parts;
+    console.log(`[PEM] Checking Key ID: ${keyId}`);
 
     try {
       const apiKey = await ApiKey.findOne({ keyId });
 
       if (!apiKey) {
+        console.log(`[PEM] Key ID not found in DB: ${keyId}`);
         return res.status(401).json({ success: false, error: 'Invalid API Key' });
       }
 
@@ -44,6 +46,7 @@ exports.protectApiKey = (requiredScope) => {
       // Validate Secret
       const isMatch = await apiKey.validateSecret(secret);
       if (!isMatch) {
+        console.log(`[PEM] Secret mismatch for Key ID: ${keyId}`);
         return res.status(401).json({ success: false, error: 'Invalid API Key' });
       }
 
